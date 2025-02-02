@@ -1,3 +1,5 @@
+#include "./include/activations.h"
+
 float feed_forward(float x, float w00, float w01, float w10, float w11, float b00, float b01, float b1)
 {
     float neuron_00 = relu(x * w00 + b00);

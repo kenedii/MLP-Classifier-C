@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include "./include/feed_forward.h"
+#include "./include/mse.h"
+#include "./include/backprop.h"
 
 // Housing prices dataset
 float X[] = {8450, 9600, 11250, 9550, 14260, 14115, 10084, 10382, 6120, 7420};
@@ -47,7 +50,6 @@ void train_model(float *X, float *Y, float lr, int num_epochs, int n)
             float y = Y[j];
 
             float y_hat = feed_forward(x1, w.w00, w.w01, w.w10, w.w11, w.b00, w.b01, w.b1);
-            float loss = squared_error(y, y_hat);
 
             w.b1 = w.b1 - lr * dl1bias(y, y_hat);
             w.w10 = w.w10 - lr * dl1w(x1, y, y_hat, w.w00, w.b00);
@@ -59,7 +61,7 @@ void train_model(float *X, float *Y, float lr, int num_epochs, int n)
         }
         w.mse = mse(X, Y, n, w.w00, w.w01, w.w10, w.w11, w.b00, w.b01, w.b1);
         printf("Epoch: %d, MSE: %f\n, Best MSE: %f", i, w.mse, b.best_mse);
-        print("Current weights: b00: %f, b01: %f, w00: %f, b1: %f, w10: %f, w11: %f\n", w.b00, w.b01, w.w00, w.b1, w.w10, w.w11);
+        printf("Current weights: b00: %f, b01: %f, w00: %f, b1: %f, w10: %f, w11: %f\n", w.b00, w.b01, w.w00, w.b1, w.w10, w.w11);
 
         if (w.mse < b.best_mse) // Update best weights
         {
@@ -79,5 +81,10 @@ void train_model(float *X, float *Y, float lr, int num_epochs, int n)
 float main()
 {
     train_model(X, Y, lr, num_epochs, n);
+
+    // Wait for any key press
+    printf("Press Enter to continue...");
+    getchar(); // Wait for Enter key
+
     return 0;
 }

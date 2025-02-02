@@ -1,3 +1,4 @@
+#include <math.h>
 // Contains activation functions
 
 float sigmoid(float x)

@@ -1,3 +1,5 @@
+#include "./include/feed_forward.h"
+
 /* Calculates the derivative of the weights and bias connected to the
 output neuron (layer 1). (Updates weights w10, w11, and b1)
 */
@@ -7,11 +9,12 @@ float dl1bias(float y, float y_hat)
 }
 
 float dl1w(float x, float y, float y_hat, float w, float b)
-/* Float w1: weight connected to output neuron that proceeds
+/* Float w: weight connected to output neuron that proceeds
 the weight we are updating */
 {
     return -(y - y_hat) * y_hat * (1 - y_hat) * a_neuron(x, w, b);
 }
+
 /* Calculates the derivative of the weights and bias connected to the
 hidden layer neurons (layer 0). (Updates weights w00, w01, b00, b01)
 */
