@@ -9,57 +9,68 @@ int n = sizeof(X) / sizeof(X[0]);
 
 typedef struct
 {
-    float b0;
+    float b00;
+    float b01;
+    float b1;
+    float w00;
     float w01;
-    float w02;
     float w10;
+    float w11;
     float mse;
 } current_weights;
 
 typedef struct
 {
-    float best_b0;
+    float best_b00;
+    float best_b01;
+    float best_b1;
+    float best_w00;
     float best_w01;
-    float best_w02;
     float best_w10;
+    float best_w11;
     float best_mse;
 } best_weights;
 
 void train_model(float *X, float *Y, float lr, int num_epochs, int n)
 {
-    current_weights w = {.b0 = 0, .w01 = 0, .w02 = 0, .w10 = 0, .mse = 0};
-    best_weights b = {.best_mse = 1000000000, .best_b0 = 0, .best_w01 = 0, .best_w02 = 0, .best_w10 = 0};
+    current_weights w = {.b00 = 0, .b01 = 0, .b1 = 0, .w00 = 0, .w01 = 0, .w10 = 0, .w11 = 0, .mse = 0};
+    best_weights b = {.best_b00 = 0, .best_b01 = 0, .best_b1 = 0, .best_w00 = 0, .best_w01 = 0, .best_w10 = 0, .best_w11 = 0, .best_mse = 1000000};
 
     printf("Beginning training . . .\n");
 
     for (int i = 0; i <= num_epochs; i++)
     {
-        current_weights w = {.b0 = 1, .w01 = 1, .w02 = 1, .w10 = 1, .mse = 1};
 
         for (int j = 0; i <= n; j++)
         {
             float x1 = X[j];
-            float x2 = X[j];
             float y = Y[j];
 
-            float y_hat = feed_forward(x1, x2, w.w01, w.w02, w.w10, w.b0);
+            float y_hat = feed_forward(x1, w.w00, w.w01, w.w10, w.w11, w.b00, w.b01, w.b1);
             float loss = squared_error(y, y_hat);
 
-            float w.b0 = w.b0 - lr * dsquared_error(1, y, y_hat, 0);
-            float dw_w01 = w.w01 - lr * dsquared_error(x1, y, y_hat, 1);
-            float dw_w02 = w.w02 - lr * dsquared_error(x2, y, y_hat, 1);
-            float dw_w10 = w.w10 - lr * dsquared_error(x1, y, y_hat, 1);
+            w.b1 = w.b1 - lr * dl1bias(y, y_hat);
+            w.w10 = w.w10 - lr * dl1w(x1, y, y_hat, w.w00, w.b00);
+            w.w11 = w.w11 - lr * dl1w(x1, y, y_hat, w.w01, w.b01);
+            w.b00 = w.b00 - lr * dl0bias(y, y_hat, x1, w.w00, w.b00, w.w10);
+            w.b01 = w.b01 - lr * dl0bias(y, y_hat, x1, w.w01, w.b01, w.w11);
+            w.w00 = w.w00 - lr * dl0weight(y, y_hat, x1, w.w00, w.b00, w.w10);
+            w.w01 = w.w01 - lr * dl0weight(y, y_hat, x1, w.w01, w.b01, w.w11);
         }
-        printf("Epoch: %d, MSE: %f\n, Best MSE: %f", i, mse(Y, y_hat, n));
-        print("Current weights: b0: %f, w01: %f, w02: %f, w10: %f\n", w.b0, w.w01, w.w02, w.w10);
+        w.mse = mse(X, Y, n, w.w00, w.w01, w.w10, w.w11, w.b00, w.b01, w.b1);
+        printf("Epoch: %d, MSE: %f\n, Best MSE: %f", i, w.mse, b.best_mse);
+        print("Current weights: b00: %f, b01: %f, w00: %f, b1: %f, w10: %f, w11: %f\n", w.b00, w.b01, w.w00, w.b1, w.w10, w.w11);
 
-        if (mse(Y, y_hat, n) < b.best_mse)
+        if (w.mse < b.best_mse) // Update best weights
         {
-            b.best_mse = mse(Y, y_hat, n);
-            b.best_b0 = w.b0;
+            b.best_mse = w.mse;
+            b.best_b00 = w.b00;
+            b.best_b01 = w.b01;
+            b.best_w00 = w.w00;
             b.best_w01 = w.w01;
-            b.best_w02 = w.w02;
             b.best_w10 = w.w10;
+            b.best_w10 = w.w10;
+            b.best_w11 = w.w10;
         }
     }
     printf("Training complete . . .\n");
