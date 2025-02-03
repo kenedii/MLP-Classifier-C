@@ -3,7 +3,7 @@
 
 float sigmoid(float x)
 {
-    return 1 / (1 + exp(-x));
+    return 1.0f / (1.0f + exp(-x));
 }
 
 float relu(float x)
