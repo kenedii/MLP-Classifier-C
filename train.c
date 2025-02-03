@@ -9,8 +9,8 @@ float X[] = {8450, 9600, 11250, 9550, 14260, 14115, 10000, 10382, 6120, 7420, 15
 // Binary target based on a threshold (200000 in this case)
 float Y[] = {0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0}; // 0 = below 10000, 1 = above or equal 10000
 
-float lr = 0.00001;
-float num_epochs = 200;
+float lr = 0.0000001;
+float num_epochs = 50;
 int n = sizeof(X) / sizeof(X[0]);
 
 // Function to generate a small random value between -0.01 and 0.01
@@ -68,9 +68,10 @@ void train_model(float *X, float *Y, float lr, int num_epochs, int n)
 
             float y_hat = feed_forward(x1, w.w00, w.w01, w.w10, w.w11, w.b00, w.b01, w.b1);
             printf("Prediction: %f, Actual: %f\n", y_hat, y);
+
+            // Update weights using backpropagation
             w.b1 = w.b1 - lr * dl1bias(y, y_hat);
             w.w10 = w.w10 - lr * dl1w(x1, y, y_hat, w.w00, w.b00);
-            printf("updating weight by dl1w(x1, y, y_hat, w.w00, w.b00); %f\n", dl1w(x1, y, y_hat, w.w00, w.b00));
             w.w11 = w.w11 - lr * dl1w(x1, y, y_hat, w.w01, w.b01);
             w.b00 = w.b00 - lr * dl0bias(y, y_hat, x1, w.w00, w.b00, w.w10);
             w.b01 = w.b01 - lr * dl0bias(y, y_hat, x1, w.w01, w.b01, w.w11);
@@ -93,7 +94,7 @@ void train_model(float *X, float *Y, float lr, int num_epochs, int n)
             b.best_b1 = w.b1;
         }
     }
-    printf("Training complete . . .\n");
+    printf("\n\nTraining complete . . .\n");
     printf("Best BCE: %f\n", b.best_loss);
     printf("Best weights: b00: %f, b01: %f, b1: %f, w00: %f, w01: %f, w10: %f, w11: %f\n", b.best_b00, b.best_b01, b.best_b1, b.best_w00, b.best_w01, b.best_w10, b.best_w11);
 }
