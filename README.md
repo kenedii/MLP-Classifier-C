@@ -1,30 +1,63 @@
-# MLP-Classifier-2-Layer
-A MLP Classifier with functions for mse, binary cross entropy, relu, sigmoid, and weight updating through backprop.
+# 🚀 MLP-Classifier
 
-**Model Description**:
+An MLP Classifier implemented in C, with functions for **MSE**, **Binary Cross-Entropy**, **ReLU**, **Sigmoid**, and **weight updating through backpropagation**.
 
-**Input Layer:**
+---
 
-1 input node that receives the input data for 1 independent X feature variable.
+## 📜 Model Description
 
-**Hidden Layer:**
+### 🧠 Input Layer
+- **1 input node**: Receives the input data for 1 independent **X feature** variable.
 
-2 nodes in the hidden layer.
+---
 
-Each hidden node has its own weight and bias:
+### 🔒 Hidden Layer
+- **2 nodes** in the hidden layer, each with its own **weight** and **bias**:
+  - **Node 1**: Weight `w00`, Bias `b00`
+  - **Node 2**: Weight `w01`, Bias `b01`
 
-Node 1: Weight w00, Bias b00
+Each hidden node calculates its output using the **ReLU** activation function:
 
-Node 2: Weight w01, Bias b01
+\[
+output_i = ReLU(x_i * w + b)
+\]
 
-The output of each hidden node is calculated using the ReLU activation function (relu(x * w + b)), which is applied to the weighted sum of the input and the node's bias.
+where `x_i` is the input feature, `w` is the weight, and `b` is the bias.
 
-**Output Layer:**
+---
 
-The outputs of the two hidden nodes (neuron_00 and neuron_01) are combined to form the final input to the output layer:
+### 💡 Output Layer
+The outputs from the two hidden nodes (`neuron_00` and `neuron_01`) are combined to form the input to the output layer:
 
-The combined value is computed as neuron_00 * w10 + neuron_01 * w11 + b1, where w10 and w11 are weights, and b1 is a bias.
+\[
+combined value = (neuron_00 * w10) + (neuron_01 * w11) + b1
+\]
 
-This combined value is then passed through the sigmoid activation function to produce the output (prediction y_hat).
+Where:
+- `w10` and `w11` are the weights.
+- `b1` is the bias.
 
-The sigmoid output represents a probability (value between 0 and 1).
+The combined value is passed through the **Sigmoid** activation function to produce the final output (prediction **ŷ**):
+
+\[
+ŷ = Sigmoid(combined value)
+\]
+
+This output represents a probability, a value between **0** and **1**.
+
+---
+
+## ⚙️ Activation Functions
+- **ReLU**: `ReLU(x) = x > 0 ? x : 0`
+- **Sigmoid**: `Sigmoid(x) = 1 / (1 + e^(-x))`
+
+---
+
+## 🧪 Loss Functions
+- **Mean Squared Error (MSE)**
+- **Binary Cross-Entropy**
+
+---
+
+## 🔄 Weight Update (Backpropagation)
+The model updates weights using **backpropagation** to minimize the loss function.
