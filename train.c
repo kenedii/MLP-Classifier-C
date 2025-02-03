@@ -3,17 +3,17 @@
 #include "./include/bce.h"
 #include "./include/backprop_bce.h"
 #include <stdlib.h> // For rand()
+#include <time.h>   // For time()
 
+// Data arrays
 float X[] = {8450, 9600, 11250, 9550, 14260, 14115, 10000, 10382, 6120, 7420, 15000, 8450, 9600, 11250, 9550, 14260, 14115, 10000, 10382, 6120, 7420};
-
-// Binary target based on a threshold (200000 in this case)
 float Y[] = {0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0}; // 0 = below 10000, 1 = above or equal 10000
 
 float lr = 0.0000001;
 float num_epochs = 50;
 int n = sizeof(X) / sizeof(X[0]);
 
-// Function to generate a small random value between -0.01 and 0.01
+// Function to generate a small random value between -0.1 and 0.1
 float random_weight()
 {
     return ((rand() / (float)RAND_MAX) * 0.2) - 0.1; // Between -0.1 and 0.1
@@ -45,6 +45,7 @@ typedef struct
 
 void train_model(float *X, float *Y, float lr, int num_epochs, int n)
 {
+    // Initialize weights with random values
     current_weights w = {
         .b00 = random_weight(),
         .b01 = random_weight(),
@@ -58,9 +59,9 @@ void train_model(float *X, float *Y, float lr, int num_epochs, int n)
 
     printf("Beginning training . . .\n");
 
+    // Start training loop
     for (int i = 0; i < num_epochs; i++)
     {
-
         for (int j = 0; j < n; j++)
         {
             float x1 = X[j];
@@ -78,6 +79,7 @@ void train_model(float *X, float *Y, float lr, int num_epochs, int n)
             w.w00 = w.w00 - lr * dl0weight(y, y_hat, x1, w.w00, w.b00, w.w10);
             w.w01 = w.w01 - lr * dl0weight(y, y_hat, x1, w.w01, w.b01, w.w11);
         }
+        // Calculate loss
         w.loss = bce(X, Y, n, w.w00, w.w01, w.w10, w.w11, w.b00, w.b01, w.b1);
         printf("Epoch: %d, BCE: %f, Best BCE: %f\n", i, w.loss, b.best_loss);
         printf("Current weights: b00: %f, b01: %f, b1: %f, w00: %f, w01: %f, w10: %f, w11: %f\n", w.b00, w.b01, w.b1, w.w00, w.w01, w.w10, w.w11);
@@ -99,8 +101,12 @@ void train_model(float *X, float *Y, float lr, int num_epochs, int n)
     printf("Best weights: b00: %f, b01: %f, b1: %f, w00: %f, w01: %f, w10: %f, w11: %f\n", b.best_b00, b.best_b01, b.best_b1, b.best_w00, b.best_w01, b.best_w10, b.best_w11);
 }
 
-float main()
+int main()
 {
+    // Seed the random number generator at the beginning of the program
+    srand(time(NULL)); // Ensures that the random values are different each time the program runs
+
+    // Train the model
     train_model(X, Y, lr, num_epochs, n);
 
     // Wait for any key press
